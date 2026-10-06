@@ -1,0 +1,610 @@
+/* =========================
+   GENERALNO
+========================= */
+
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: #0f172a;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    /* MOBILE: safety net - nothing can make the page scroll sideways */
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+a {
+    text-decoration: none;
+}
+
+
+/* =========================
+   VSE STRANI
+========================= */
+
+/* header */
+.ai-header {
+    /* MOBILE: clamp(min, preferred, max) - height follows screen width (25vw)
+       but never goes below 120px or above the original 200px */
+    height: clamp(120px, 25vw, 200px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.ai-title-btn {
+    /* MOBILE: title text shrinks smoothly on small screens (was fixed 48px) */
+    font-size: clamp(28px, 7vw, 48px);
+    text-align: center;
+    font-weight: bold;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+    text-decoration: none;
+}
+
+.ai-title-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+/* navbar */
+.nav-bar {
+    display: flex;
+    /* MOBILE: min-height instead of height, so the bar can grow if text wraps */
+    min-height: 60px;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.nav-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+    text-align: center;
+    padding: 0 10px;
+    /* MOBILE: menu text scales between 13px and 16px */
+    font-size: clamp(13px, 3.5vw, 16px);
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* main layout */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    /* MOBILE: side padding goes from 30px on desktop down to 16px on phones */
+    padding: clamp(24px, 5vw, 40px) clamp(16px, 4vw, 30px);
+}
+
+.page-title {
+    text-align: center;
+    /* MOBILE: fluid heading size */
+    font-size: clamp(28px, 6vw, 36px);
+    margin-bottom: 35px;
+    color: white;
+}
+
+/* footer */
+.site-footer {
+    background: linear-gradient(135deg, #0d1b2a, #1b263b);
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+    width: 100%;
+    margin-top: auto;
+}
+
+.site-footer h3 {
+    margin-bottom: 15px;
+    font-size: 24px;
+}
+
+.site-footer p {
+    margin: 5px 0;
+}
+
+.site-footer .socials a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    /* MOBILE: bigger tap area for fingers */
+    display: inline-block;
+    padding: 6px 0;
+    transition: 0.3s;
+}
+
+.site-footer .socials a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================
+   INDEX.HTML
+========================= */
+
+/* MOBILE: the whole image stack is now built from ONE variable, --w (the
+   width of one picture). It is 38% of the screen width, but at least 120px
+   and at most the original 250px. Every position below is a multiple of --w,
+   so on a smaller screen everything shrinks together and keeps its shape.
+   (On desktop --w = 250px, so all numbers end up the same as before.) */
+.section {
+    --w: clamp(120px, 38vw, 250px);
+    position: relative;
+    /* MOBILE: was fixed 1000px - now 4x the picture width, capped at 1000px */
+    height: clamp(500px, calc(var(--w) * 4), 1000px);
+    overflow: hidden;
+}
+
+.bg-blur {
+    position: absolute;
+    top: 0;
+    left: -10%;
+    width: 120%;
+    /* MOBILE: follow the section height instead of a fixed 1000px */
+    height: 100%;
+    background: url("4k_ozadje.jpeg") center/cover no-repeat;
+    z-index: 1;
+}
+
+.stack {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+}
+
+.stack img {
+    position: absolute;
+    /* MOBILE: was 250px */
+    width: var(--w);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.img1 {
+    /* MOBILE: was 20px (= 0.08 x 250px) */
+    bottom: calc(var(--w) * 0.08);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+}
+
+.img2 {
+    /* MOBILE: was 60px and 50% + 50px */
+    bottom: calc(var(--w) * 0.24);
+    left: calc(50% + var(--w) * 0.2);
+    transform: rotate(8deg);
+    z-index: 2;
+}
+
+.img3 {
+    /* MOBILE: was 100px and 50% - 250px */
+    bottom: calc(var(--w) * 0.4);
+    left: calc(50% - var(--w));
+    transform: rotate(-8deg);
+    z-index: 1;
+}
+
+.user-box {
+    position: absolute;
+    /* MOBILE: sits just above the top picture. The pictures are 1856x2304,
+       so their height is 1.24 x width -> 0.4w (img3 offset) + 1.24w + 40px.
+       Was a fixed 450px. */
+    bottom: calc(var(--w) * 1.64 + 40px);
+    left: 50%;
+    transform: translateX(-50%);
+    /* MOBILE: box can never be wider than the screen minus a margin */
+    width: max-content;
+    max-width: calc(100% - 32px);
+    padding: clamp(10px, 2.5vw, 15px) clamp(14px, 4vw, 25px);
+    background: linear-gradient(135deg, rgba(79, 172, 254, 0.4), rgba(0, 242, 254, 0.6));
+    border-radius: 12px;
+    text-align: center;
+    z-index: 4;
+    /* MOBILE: was fixed 20px */
+    font-size: clamp(15px, 4vw, 20px);
+    color: white;
+    font-weight: bold;
+}
+
+
+/* =========================
+   PROMPTI.HTML
+========================= */
+
+.prompt-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    background: #1e293b;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    color: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+
+
+.prompt-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.prompt-title {
+    /* MOBILE: fluid title size (was 20px) */
+    font-size: clamp(17px, 4.5vw, 20px);
+    font-weight: bold;
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.prompt-text {
+    margin-right: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+    /* MOBILE: long words / JSON without spaces (Minecraft prompt) break
+       onto the next line instead of sticking out of the card */
+    overflow-wrap: anywhere;
+}
+
+.prompt-card.expanded .prompt-text {
+    display: block;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: unset;
+    overflow: visible;
+}
+
+.copy-btn {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+    flex-shrink: 0;
+}
+
+.copy-btn.copied {
+    background: #22c55e;
+}
+
+/* forma za oddajo prompta */
+.prompt-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #1e293b;
+    border-radius: 16px;
+    /* MOBILE: less inner padding on narrow screens (was 24px) */
+    padding: clamp(16px, 4vw, 24px);
+    margin-bottom: 35px;
+    color: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.form-title {
+    margin: 0 0 10px;
+    /* MOBILE: fluid heading size (was 24px) */
+    font-size: clamp(20px, 5vw, 24px);
+}
+
+.prompt-form label {
+    font-weight: bold;
+    margin-top: 6px;
+}
+
+.prompt-form input,
+.prompt-form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #334155;
+    border-radius: 8px;
+    background: #0f172a;
+    color: white;
+    /* MOBILE: 16px or more stops iPhones from auto-zooming into the
+       page when you tap a text field (was 15px) */
+    font-size: 16px;
+    resize: vertical;
+}
+
+.prompt-form input:focus,
+.prompt-form textarea:focus {
+    outline: none;
+    border-color: #4facfe;
+}
+
+.submit-btn {
+    align-self: flex-start;
+    margin-top: 12px;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.submit-btn:hover {
+    transform: scale(1.04);
+}
+
+/* pop up okno */
+.popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+}
+
+.popup-overlay.show {
+    display: flex;
+}
+
+.popup-box {
+    background: #1e293b;
+    color: white;
+    border-radius: 16px;
+    /* MOBILE: popup never wider than 420px, and padding shrinks on phones */
+    width: 100%;
+    max-width: 420px;
+    padding: clamp(20px, 6vw, 30px) clamp(20px, 6vw, 40px);
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.popup-box p {
+    /* MOBILE: fluid text size (was 20px) */
+    font-size: clamp(17px, 4.5vw, 20px);
+    font-weight: bold;
+    margin: 0 0 10px;
+}
+
+.popup-box .submit-btn {
+    align-self: center;
+}
+
+
+/* =========================
+   ORODJA.HTML
+========================= */
+
+.tools-grid {
+    display: grid;
+    /* MOBILE: min(320px, 100%) - a column is 320px wide, unless the screen
+       is narrower than that, then it is just 100%. Before, on phones under
+       ~360px the cards were wider than the screen. */
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    /* MOBILE: smaller gap on phones (was 25px) */
+    gap: clamp(15px, 3vw, 25px);
+}
+
+.tool-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #1e293b;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+}
+
+.tool-image {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: white;
+    padding: 8px;
+    flex-shrink: 0;
+}
+
+.tool-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tool-name {
+    /* MOBILE: fluid size (was 22px) */
+    font-size: clamp(19px, 5vw, 22px);
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.tool-link {
+    color: #7dd3fc;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.tool-link:hover {
+    color: white;
+}
+
+
+/* =========================
+   TUTORIALS.HTML
+========================= */
+
+.section-title {
+    /* MOBILE: fluid size (was 28px, and 24px in the old phone block) */
+    font-size: clamp(22px, 5.5vw, 28px);
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: white;
+}
+
+.featured-video-card {
+    background: #1e293b;
+    border-radius: 18px;
+    /* MOBILE: thinner frame around the video on phones = bigger video */
+    padding: clamp(14px, 4vw, 24px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    margin-bottom: clamp(30px, 6vw, 45px);
+}
+
+.tutorial-author {
+    font-size: 14px;
+    font-weight: bold;
+    color: #7dd3fc;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+}
+
+.tutorial-title {
+    /* MOBILE: fluid size (was 28px, and 22px in the old phone block) */
+    font-size: clamp(21px, 5.5vw, 28px);
+    font-weight: bold;
+    margin-bottom: 18px;
+    color: white;
+}
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 14px;
+    background: #0b1120;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 14px;
+}
+
+.tutorials-grid {
+    display: grid;
+    /* MOBILE: same fix as .tools-grid - no overflow on tiny phones */
+    grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+    gap: clamp(15px, 3vw, 25px);
+}
+
+.tutorial-card {
+    background: #1e293b;
+    border-radius: 16px;
+    /* MOBILE: fluid padding (was 24px) */
+    padding: clamp(18px, 4vw, 24px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.tutorial-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+}
+
+.tutorial-link {
+    display: inline-block;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 16px;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+
+.tutorial-link:hover {
+    transform: scale(1.04);
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+/* MOBILE: most sizes above now scale on their own with clamp(), so this
+   block only changes LAYOUT for screens 600px wide or less. All the old
+   fixed phone numbers (title 34px, images 170px, section 780px, ...) were
+   removed - the fluid values above replace them on every screen size. */
+@media (max-width: 600px) {
+    /* cards go from "side by side" to "stacked" */
+    .tool-card,
+    .prompt-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    /* MOBILE: prompt card stretches its children to full width, and long
+       prompt text stays left-aligned (centered paragraphs are hard to read) */
+    .prompt-card {
+        align-items: stretch;
+    }
+
+    .prompt-text {
+        margin-right: 0;
+        text-align: left;
+    }
+
+    /* MOBILE: big full-width buttons are easier to hit with a thumb */
+    .copy-btn,
+    .submit-btn,
+    .tutorial-link {
+        width: 100%;
+        padding: 14px;
+        text-align: center;
+    }
+
+    .tool-image {
+        width: 90px;
+        height: 90px;
+    }
+}
